@@ -5516,6 +5516,30 @@
       });
     }
   }
+  const injectManualBtn = (onStart) => {
+    const logStore = useLogStore();
+    if (document.getElementById('cx-manual-ctrl')) return;
+    var d = document.createElement('div');
+    d.id = 'cx-manual-ctrl';
+    d.innerHTML = '<button id="cx-btn-start" style="padding:10px 20px;background:#1f71e0;color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.2);">开始答题</button><button id="cx-btn-stop" style="display:none;padding:8px 16px;background:#e74c3c;color:#fff;border:none;border-radius:8px;font-size:12px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.2);margin-top:6px;">停止</button>';
+    d.style.cssText = 'position:fixed;bottom:80px;right:20px;z-index:100005;display:flex;flex-direction:column;align-items:center;';
+    document.body.appendChild(d);
+    document.getElementById('cx-btn-start').onclick = function() {
+      const t = useConfigStore().queryApis[0]?.token || '';
+      if (!t || t.trim() === '') {
+        logStore.addLog('请先在答题面板填写题库密钥', 'danger');
+        return;
+      }
+      this.style.display = 'none';
+      document.getElementById('cx-btn-stop').style.display = '';
+      logStore.addLog('手动触发：开始解析', 'primary');
+      if (onStart) onStart();
+    };
+    document.getElementById('cx-btn-stop').onclick = function() {
+      logStore.addLog('已停止，刷新页面', 'warning');
+      location.reload();
+    };
+  };
   const useCxChapterLogic = () => {
     const logStore = useLogStore();
     const init = () => {
@@ -5534,7 +5558,7 @@
       const autoDetect = cfg.otherParams.params[2]?.value ?? false;
       if (!autoDetect) {
         logStore.addLog(`检测到章节学习页面（手动模式）`, "primary");
-        injectManualControl();
+        injectManualBtn(() => { processIframeTask(); setupInterceptor(); });
         return;
       }
       const token = cfg.queryApis[0]?.token || '';
@@ -5546,30 +5570,6 @@
       logStore.addLog(`正在解析任务点，请稍等5-10秒（如果长时间没有反应，请刷新页面）`, "warning");
       processIframeTask();
       setupInterceptor();
-    };
-    const injectManualControl = () => {
-      if (document.getElementById('cx-manual-ctrl')) return;
-      var d = document.createElement('div');
-      d.id = 'cx-manual-ctrl';
-      d.innerHTML = '<button id="cx-btn-start" style="padding:10px 20px;background:#1f71e0;color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.2);">开始答题</button><button id="cx-btn-stop" style="display:none;padding:8px 16px;background:#e74c3c;color:#fff;border:none;border-radius:8px;font-size:12px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.2);margin-top:6px;">停止</button>';
-      d.style.cssText = 'position:fixed;bottom:80px;right:20px;z-index:100005;display:flex;flex-direction:column;align-items:center;';
-      document.body.appendChild(d);
-      document.getElementById('cx-btn-start').onclick = function() {
-        const t = useConfigStore().queryApis[0]?.token || '';
-        if (!t || t.trim() === '') {
-          logStore.addLog('请先在答题面板填写题库密钥', 'danger');
-          return;
-        }
-        this.style.display = 'none';
-        document.getElementById('cx-btn-stop').style.display = '';
-        logStore.addLog('手动触发：开始解析', 'primary');
-        processIframeTask();
-        setupInterceptor();
-      };
-      document.getElementById('cx-btn-stop').onclick = function() {
-        logStore.addLog('已停止，刷新页面', 'warning');
-        location.reload();
-      };
     };
     const configStore = useConfigStore();
     const processIframeTask = () => {
@@ -5808,6 +5808,12 @@
     const logStore = useLogStore();
     const cfg = useConfigStore();
     const token = cfg.queryApis[0]?.token || '';
+    const autoDetect = cfg.otherParams.params[2]?.value ?? false;
+    if (!autoDetect) {
+      logStore.addLog(`检测到新版作业页面（手动模式），右下角点击「开始答题」`, "primary");
+      injectManualBtn(async () => { await new CxQuestionHandler("zy").init(); });
+      return;
+    }
     if (!token || token.trim() === '') {
       logStore.addLog(`请先在答题面板填写题库密钥`, "danger");
       return;
@@ -5820,6 +5826,12 @@
     const logStore = useLogStore();
     const configStore = useConfigStore();
     const token = configStore.queryApis[0]?.token || '';
+    const autoDetect = configStore.otherParams.params[2]?.value ?? false;
+    if (!autoDetect) {
+      logStore.addLog(`检测到新版考试页面（手动模式），右下角点击「开始答题」`, "primary");
+      injectManualBtn(async () => { await new CxQuestionHandler("ks").init(); });
+      return;
+    }
     if (!token || token.trim() === '') {
       logStore.addLog(`请先在答题面板填写题库密钥`, "danger");
       return;
