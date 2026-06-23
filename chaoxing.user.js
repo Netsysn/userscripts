@@ -5531,12 +5531,7 @@
       }
       // 检查自动检测开关 (otherParams.params[2])
       const cfg = useConfigStore();
-      const token = cfg.queryApis[0]?.token || '';
-      if (!token || token.trim() === '') {
-        logStore.addLog(`请先在答题面板填写题库密钥`, "danger");
-        return;
-      }
-      const autoDetect = cfg.otherParams.params[2]?.value ?? true;
+      const autoDetect = cfg.otherParams.params[2]?.value ?? false;
       if (!autoDetect) {
         logStore.addLog(`检测到章节学习页面（手动模式）`, "primary");
         injectManualControl();
@@ -5555,6 +5550,11 @@
       d.style.cssText = 'position:fixed;bottom:80px;right:20px;z-index:100005;display:flex;flex-direction:column;align-items:center;';
       document.body.appendChild(d);
       document.getElementById('cx-btn-start').onclick = function() {
+        const t = useConfigStore().queryApis[0]?.token || '';
+        if (!t || t.trim() === '') {
+          logStore.addLog('请先在答题面板填写题库密钥', 'danger');
+          return;
+        }
         this.style.display = 'none';
         document.getElementById('cx-btn-stop').style.display = '';
         logStore.addLog('手动触发：开始解析', 'primary');
