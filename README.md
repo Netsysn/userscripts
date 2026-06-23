@@ -39,7 +39,6 @@ https://cdn.jsdelivr.net/gh/Netsysn/userscripts/chaoxing.user.js
 | 功能 | 说明 |
 |------|------|
 | 🔒 默认全部关闭 | 所有自动化功能默认 `false`，用户按需开启，避免误操作 |
-| 🧹 移除第三方 IP | 清除 `43.139.242.144` 引用，全部指向自建服务 |
 | 📱 移动端拖拽 | 新增 `touchstart/touchmove/touchend`，手机/平板可拖拽设置面板 |
 | 🌐 CDN 分发 | 通过 jsDelivr 全球 CDN 分发脚本，绕过 Cloudflare 安全检查 |
 | 🐳 基础设施 | Cloudflare Tunnel 零端口暴露 + systemd 服务化 + Nginx 反代 |
