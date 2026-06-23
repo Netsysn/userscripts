@@ -5537,6 +5537,11 @@
         injectManualControl();
         return;
       }
+      const token = cfg.queryApis[0]?.token || '';
+      if (!token || token.trim() === '') {
+        logStore.addLog(`请先在答题面板填写题库密钥`, "danger");
+        return;
+      }
       logStore.addLog(`检测到用户进入到章节学习页面`, "primary");
       logStore.addLog(`正在解析任务点，请稍等5-10秒（如果长时间没有反应，请刷新页面）`, "warning");
       processIframeTask();
