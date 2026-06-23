@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>使用教程 · 超星学习通 AI 答题助手</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+      background: #f8f9fb;
+      color: #222;
+      line-height: 1.8;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .wrap {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 48px 24px 80px
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 8px;
+      font-weight: 700
+    }
+
+    h2 {
+      font-size: 20px;
+      margin: 40px 0 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e5e7eb
+    }
+
+    h3 {
+      font-size: 16px;
+      margin: 24px 0 8px;
+      font-weight: 600
+    }
+
+    p {
+      margin: 8px 0;
+      color: #444
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      margin: 16px 0;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      background: #f3f4f6;
+      object-fit: contain;
+      cursor: zoom-in;
+      transition: opacity .2s
+    }
+
+    img:hover {
+      opacity: .88
+    }
+
+    @media(max-width:640px) {
+      img {
+        border-radius: 6px;
+        margin: 12px 0
+      }
+    }
+
+    /* ---- lightbox ---- */
+    .lb {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(0, 0, 0, 0);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s, background .25s;
+      -webkit-tap-highlight-color: transparent
+    }
+
+    .lb.show {
+      opacity: 1;
+      pointer-events: auto;
+      background: rgba(0, 0, 0, .82)
+    }
+
+    .lb-img {
+      max-width: 92vw;
+      max-height: 92vh;
+      border-radius: 8px;
+      box-shadow: 0 12px 48px rgba(0, 0, 0, .4);
+      transform: scale(.92);
+      transition: transform .25s cubic-bezier(.34, 1.56, .64, 1);
+      user-select: none;
+      -webkit-user-select: none
+    }
+
+    .lb.show .lb-img {
+      transform: scale(1)
+    }
+
+    .lb-close {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      width: 40px;
+      height: 40px;
+      border: none;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .15);
+      color: #fff;
+      font-size: 22px;
+      line-height: 40px;
+      text-align: center;
+      cursor: pointer;
+      transition: background .2s;
+      -webkit-tap-highlight-color: transparent
+    }
+
+    .lb-close:hover {
+      background: rgba(255, 255, 255, .3)
+    }
+
+    @media(max-width:640px) {
+      .lb-img {
+        max-width: 96vw;
+        max-height: 88vh;
+        border-radius: 6px
+      }
+
+      .lb-close {
+        top: 10px;
+        right: 10px;
+        width: 36px;
+        height: 36px;
+        font-size: 20px;
+        line-height: 36px
+      }
+    }
+
+    ol,
+    ul {
+      padding-left: 24px;
+      margin: 8px 0
+    }
+
+    li {
+      margin: 4px 0
+    }
+
+    code {
+      background: #eef1f5;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.9em;
+      cursor: pointer;
+      word-break: break-all;
+      -webkit-tap-highlight-color: rgba(31, 113, 224, .15);
+      user-select: all;
+      -webkit-user-select: all
+    }
+    code:hover {
+      background: #dde5f0
+    }
+    code:active {
+      background: #cdd8e6
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 12px 0;
+      font-size: 14px
+    }
+
+    @media(max-width:640px) {
+      .table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin: 12px -16px;
+        padding: 0 16px
+      }
+      .table-wrap table {
+        min-width: 500px;
+        font-size: 13px
+      }
+    }
+
+    td,
+    th {
+      border: 1px solid #e5e7eb;
+      padding: 8px 14px;
+      text-align: left
+    }
+
+    th {
+      background: #f3f4f6;
+      font-weight: 600
+    }
+
+    a {
+      color: #1f71e0;
+      text-decoration: none
+    }
+
+    a:hover {
+      text-decoration: underline
+    }
+
+    .q {
+      margin: 16px 0;
+      font-weight: 600;
+      color: #1f71e0
+    }
+
+    .a {
+      margin: 4px 0 16px 16px;
+      color: #555
+    }
+
+    .strong {
+      cursor: pointer;
+      color: #1f71e0;
+      transition: opacity .2s;
+    }
+
+    .strong:hover {
+      opacity: .75
+    }
+
+    .footer {
+      margin-top: 64px;
+      padding: 24px;
+      text-align: center;
+      color: #999;
+      font-size: 13px;
+      border-top: 1px solid #e5e7eb
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #1f71e0, #176ae5);
+      color: #fff;
+      padding: 40px 32px;
+      border-radius: 12px;
+      margin-bottom: 32px
+    }
+
+    .hero h1 {
+      color: #fff;
+      font-size: 24px
+    }
+
+    .hero p {
+      color: rgba(255, 255, 255, .85);
+      font-size: 14px
+    }
+
+    @media(max-width:640px) {
+      .wrap {
+        padding: 24px 16px 60px
+      }
+
+      h1 {
+        font-size: 22px
+      }
+
+      h2 {
+        font-size: 17px
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <div class="hero">
+      <h1>超星学习通 AI 答题助手</h1>
+      <p>基于 DeepSeek + 联网搜索 · 50 题准确率 95%~99%</p>
+    </div>
+
+    <h2>1. 快速开始</h2>
+
+    <h3>1.1 安装 ScriptCat 扩展</h3>
+    <p><a href="https://docs.scriptcat.org/" target="_blank">ScriptCat 官网</a> → 下载对应你浏览器的扩展并安装。</p>
+    <img src="./assets/gfym.png" alt="ScriptCat 安装" loading="lazy">
+
+    <h3>1.2 设置 ScriptCat 扩展</h3>
+    <ol>
+      <li>以 edge 为例, 点击右上角的扩展</li>
+      <li>在下拉菜单中找到 「<span class="strong">ScriptCat</span>」, 点击右侧的 更多操作</li>
+      <li>点击管理扩展, 进入到管理页面</li>
+      <li>点击勾选 「<span class="strong">允许用户脚本</span>」</li>
+      <li>其他浏览器具体可参考 <a href="https://docs.scriptcat.org/docs/use/use/" target="_blank">ScriptCat 官网</a> 配置
+      </li>
+    </ol>
+    <img src="./assets/step.png" alt="安装脚本" loading="lazy">
+
+
+    <h3>1.3 安装答题脚本</h3>
+    <ol>
+      <li>打开 ScriptCat 管理面板</li>
+      <li>从「<span class="strong">新建脚本</span>」下拉菜单下找到「<span class="strong">链接导入</span>」</li>
+      <li>填入脚本地址（<span style="color:#1f71e0;font-size:12px">点击即复制</span>）：<br><code onclick="handleCopy(this)">https://cdn.jsdelivr.net/gh/Netsysn/userscripts/chaoxing.user.js</code>
+      </li>
+      <li>点击确定</li>
+    </ol>
+    <img src="./assets/install.png" alt="安装脚本" loading="lazy">
+
+    <h3>1.4 填写密钥</h3>
+    <ol>
+      <li>打开<a href="http://chaoxing.com/" target="_blank">超星学习通</a>任意课程章节页面</li>
+      <li>点击页面右侧悬浮的脚本面板</li>
+      <li>切换到「<span class="strong">答题</span>」标签</li>
+      <li>在密钥输入框中粘贴你的 32 位密钥</li>
+      <li>刷新页面</li>
+    </ol>
+    <img src="./assets/key.png" alt="填写密钥" loading="lazy">
+    <h2>2. 功能说明</h2>
+
+    <h3>2.1 自动检测与答题</h3>
+    <p>进入章节学习页面后，脚本自动识别题目并调用 AI 作答。日志面板会实时显示进度。</p>
+    <img src="./assets/log.png" alt="答题日志" loading="lazy">
+
+    <h3>2.2 自动提交</h3>
+    <p>默认关闭，需在设置中手动开启。开启后，正确率达到阈值（默认 85%）自动提交。</p>
+
+    <h3>2.3 手动模式</h3>
+    <p>在设置中关闭「自动检测题目」后，进入章节页面右下角会出现「开始答题」按钮，点击手动触发。</p>
+    <img src="./assets/manual.png" alt="手动模式" loading="lazy">
+
+    <h3>2.4 自动过任务点</h3>
+    <p>脚本会自动播放视频/音频、翻页 PPT/PDF/电子书，完成后自动跳转下一章节。</p>
+
+    <h2>3. 设置说明</h2>
+    <div class="table-wrap">
+    <table>
+      <tr>
+        <th>设置项</th>
+        <th>默认值</th>
+        <th>说明</th>
+      </tr>
+      <tr>
+        <td>章节作业自动提交</td>
+        <td>关闭</td>
+        <td>开启后自动提交章节作业</td>
+      </tr>
+      <tr>
+        <td>是否自动下一章节</td>
+        <td>关闭</td>
+        <td>开启后完成后自动跳转</td>
+      </tr>
+      <tr>
+        <td>只答题，不做其他</td>
+        <td>关闭</td>
+        <td>开启后跳过视频/PPT</td>
+      </tr>
+      <tr>
+        <td>跳过已答题目</td>
+        <td>关闭</td>
+        <td>遇到已作答题目自动跳过</td>
+      </tr>
+      <tr>
+        <td>严格模式</td>
+        <td>关闭</td>
+        <td>不确定的题目跳过，减少错误</td>
+      </tr>
+      <tr>
+        <td>自动检测题目</td>
+        <td>关闭</td>
+        <td>关闭后改为手动模式，右下角出现开始按钮</td>
+      </tr>
+      <tr>
+        <td>切换答题间隔</td>
+        <td>3 秒</td>
+        <td>每题之间的等待时间</td>
+      </tr>
+      <tr>
+        <td>正确率自动提交阈值</td>
+        <td>85%</td>
+        <td>达到此正确率才自动提交</td>
+      </tr>
+      <tr>
+        <td>启用视频倍速</td>
+        <td>关闭</td>
+        <td>开启后可自定义视频播放倍速</td>
+      </tr>
+      <tr>
+        <td>倍速值</td>
+        <td>2x</td>
+        <td>视频倍速值，默认 2 倍</td>
+      </tr>
+    </table>
+    </div>
+    <img src="./assets/setting.png" alt="设置面板" loading="lazy">
+
+    <h2>4. 常见问题</h2>
+
+    <div class="q">Q: 密钥在哪填？</div>
+    <div class="a">脚本悬浮窗 → 答题标签 → 密钥输入框。填完刷新页面。</div>
+
+    <div class="q">Q: 提示「Token 验证失败」？</div>
+    <div class="a">密钥填错了或已过期。检查是否复制完整（32 位，纯字母数字），如已过期请重新购买。</div>
+
+    <div class="q">Q: 答案不自动填充？</div>
+    <div class="a">检查脚本面板是否开启、密钥是否正确。仍不行就刷新页面或换 Chrome 浏览器。</div>
+
+    <div class="q">Q: 密钥过期了怎么办？</div>
+    <div class="a">前往 <a href="https://netsysn.cn">发卡站</a> 重新购买新密钥。</div>
+
+    <div class="q">Q: 支持哪些平台？</div>
+    <div class="a">超星学习通（chaoxing.com / .edu.cn 等）、智慧树（zhihuishu.com）。</div>
+
+    <div class="q">Q: 用了会被检测吗？</div>
+    <div class="a">脚本仅供学习研究，考试等重要场合请自行答题。</div>
+
+    <h2>5. 联系我</h2>
+    <div class="table-wrap">
+    <table>
+      <tr>
+        <td>QQ</td>
+        <td>1065722706</td>
+      </tr>
+      <tr>
+        <td>微信</td>
+        <td>WDKGZ-938FY-AB5L2</td>
+      </tr>
+      <tr>
+        <td>发卡站</td>
+        <td><a href="https://netsysn.cn">https://netsysn.cn</a></td>
+      </tr>
+      <tr>
+        <td>脚本更新</td>
+        <td><a href="https://cdn.jsdelivr.net/gh/Netsysn/userscripts/chaoxing.user.js">chaoxing.user.js</a></td>
+      </tr>
+      <tr>
+        <td>在线时间</td>
+        <td>工作日 9:00~12:30 / 14:30~20:20 / 22:30~深夜（1:30 后就不好说了哈）</td>
+      </tr>
+    </table>
+    </div>
+
+    <div class="footer">© 2026 超星 AI 答题助手 · 题库调用额度制 · 脚本工具免费附赠</div>
+
+  </div>
+
+  <!-- lightbox -->
+  <div class="lb" id="lb" aria-hidden="true">
+    <button class="lb-close" id="lbClose" aria-label="关闭">&times;</button>
+    <img class="lb-img" id="lbImg" alt="">
+  </div>
+
+  <script>
+    let copyTimer = null;
+
+    const handleCopy = (item) => {
+      if (copyTimer) clearTimeout(copyTimer);
+      const text = item.getAttribute('data-copy') || item.innerText;
+      item.setAttribute('data-copy', text);
+
+      const done = () => {
+        item.innerText = '已复制';
+        copyTimer = setTimeout(() => {
+          item.innerText = item.getAttribute('data-copy');
+        }, 2000);
+      };
+
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(item, text, done));
+      } else {
+        fallbackCopy(item, text, done);
+      }
+    };
+
+    const fallbackCopy = (item, text, cb) => {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      ta.style.top = '-9999px';
+      ta.style.fontSize = '16px';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      ta.setSelectionRange(0, text.length);
+      try {
+        document.execCommand('copy');
+        cb();
+      } catch (e) {
+        item.innerText = '复制失败，请长按手动复制';
+      }
+      document.body.removeChild(ta);
+    };
+
+    // ---- lightbox ----
+    const lb = document.getElementById('lb');
+    const lbImg = document.getElementById('lbImg');
+    const lbClose = document.getElementById('lbClose');
+
+    document.querySelectorAll('.wrap img').forEach(img => {
+      img.addEventListener('click', () => {
+        lbImg.src = img.src;
+        lbImg.alt = img.alt;
+        lb.classList.add('show');
+        lb.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      });
+    });
+
+    const close = () => {
+      lb.classList.remove('show');
+      lb.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    };
+
+    lbClose.addEventListener('click', close);
+    lb.addEventListener('click', e => {
+      if (e.target === lb) close();
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && lb.classList.contains('show')) close();
+    });
+  </script>
+</body>
+
+</html>
