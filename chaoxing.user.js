@@ -474,7 +474,7 @@
           {
             name: "自建题库",
             token: "",
-            url: "https://api.netsysn.cn"
+            url: "https://netsysn.cn"
           }
           // {
           //     name: "题库",
@@ -5269,7 +5269,7 @@
   const getAnswer = async (question) => {
     const configStore = useConfigStore();
     const logStore = useLogStore();
-    const baseUrl = (configStore.queryApis[0].url || "https://api.netsysn.cn").replace(/\/+$/, "");
+    const baseUrl = (configStore.queryApis[0].url || "https://netsysn.cn").replace(/\/+$/, "");
     const apis = [baseUrl + "/search"];
     for (const url2 of apis) {
       const result = await getAnswerFrom(question, url2);
