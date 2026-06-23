@@ -5215,23 +5215,41 @@
     await sleep(configStore.otherParams.params[0].value);
     return new Promise((resolve) => {
       const scriptInfo = getScriptInfo();
-      _GM_xmlhttpRequest({
-        url: url2 + `?s=${scriptInfo.author}&v=${scriptInfo.version}`,
-        method: "POST",
-        headers,
-        data,
-        timeout: 1e4,
-        onload: (response) => {
-          try {
-            const apiResponse = JSON.parse(response.responseText);
-            resolve(apiResponse);
-          } catch (e) {
-            resolve(handleError("解析出错"));
-          }
-        },
-        onerror: () => resolve(handleError("请求出错")),
-        ontimeout: () => resolve(handleError("请求超时"))
-      });
+      let retries = 0;
+      const maxRetries = 2;
+      const doRequest = () => {
+        _GM_xmlhttpRequest({
+          url: url2 + `?s=${scriptInfo.author}&v=${scriptInfo.version}`,
+          method: "POST",
+          headers,
+          data,
+          timeout: 1e4,
+          onload: (response) => {
+            try {
+              const apiResponse = JSON.parse(response.responseText);
+              resolve(apiResponse);
+            } catch (e) {
+              // 可能是 Cloudflare 挑战页面，重试
+              if (retries < maxRetries && (response.responseText.includes('_cf_chl_opt') || response.responseText.includes('Just a moment'))) {
+                retries++;
+                setTimeout(doRequest, 2000);
+              } else {
+                resolve(handleError("解析出错"));
+              }
+            }
+          },
+          onerror: () => {
+            if (retries < maxRetries) {
+              retries++;
+              setTimeout(doRequest, 2000);
+            } else {
+              resolve(handleError("请求出错"));
+            }
+          },
+          ontimeout: () => resolve(handleError("请求超时"))
+        });
+      };
+      doRequest();
     });
   };
   // 答题缓存（GM持久化）
