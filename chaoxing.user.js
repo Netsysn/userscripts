@@ -5385,12 +5385,23 @@
                 }
               }
               if (!matched && question.options) {
-                // 最后尝试：直接匹配第一个包含answer关键字的选项
+                // 尝试1：包含子串匹配
                 for (const key in question.options) {
                   if (key.trim().includes(answer.substring(0, 2)) || answer.substring(0, 2).includes(key.trim())) {
                     question.options[key]?.click();
                     matched = true;
                     break;
+                  }
+                }
+              }
+              if (!matched && question.options) {
+                // 尝试2：字母→索引映射 (A→0, B→1, ...)
+                const idx = answer.charCodeAt(0) - 65; // 'A'.charCodeAt = 65
+                if (idx >= 0 && idx < 26) {
+                  const keys = Object.keys(question.options);
+                  if (idx < keys.length) {
+                    question.options[keys[idx]]?.click();
+                    matched = true;
                   }
                 }
               }
