@@ -25,7 +25,7 @@
 // @connect      api.tikuhai.com
 // @connect      cx.icodef.com
 // @connect      62.234.36.191
-// @connect      43.139.242.144
+
 // @connect      *
 // @grant        GM_getResourceText
 // @grant        GM_getValue
@@ -375,12 +375,12 @@
                   // },
                   {
                     name: "章节作业自动提交",
-                    value: true,
+                    value: false,
                     type: "boolean"
                   },
                   {
                     name: "是否自动下一章节",
-                    value: true,
+                    value: false,
                     type: "boolean"
                   },
                   {
@@ -404,7 +404,7 @@
                 name: "考试设置",
                 params: [{
                   name: "是否自动切换",
-                  value: true,
+                  value: false,
                   type: "boolean"
                 }]
               }
@@ -416,7 +416,7 @@
               name: "答题设置",
               params: [{
                 name: "是否自动切换",
-                value: true,
+                value: false,
                 type: "boolean"
               }]
             }]
@@ -427,7 +427,7 @@
               name: "答题设置",
               params: [{
                 name: "是否自动切换",
-                value: true,
+                value: false,
                 type: "boolean"
               }]
             }]
@@ -454,7 +454,7 @@
             },
             {
               name: "自动检测题目",
-              value: true,
+              value: false,
               type: "boolean"
             },
             {
@@ -5193,7 +5193,7 @@
     const configStore = useConfigStore();
     const token = configStore.queryApis[0].token;
     if (!token || token.trim() === '') {
-      return Promise.resolve(handleError("请先获取题库密钥！访问 43.139.242.144:8082 购买"));
+      return Promise.resolve(handleError("请先获取题库密钥！访问 netsysn.cn 购买"));
     }
     const headers = {
       "Content-Type": "application/json",
@@ -6179,18 +6179,29 @@
         left: configStore.position.x,
         top: configStore.position.y
       });
+      const getClientPos = (e) => {
+        if (e.touches) {
+          return { clientX: e.touches[0].clientX, clientY: e.touches[0].clientY };
+        }
+        return { clientX: e.clientX, clientY: e.clientY };
+      };
       const startDrag = (event) => {
         isDragging.value = true;
-        offsetX.value = event.clientX - event.target.getBoundingClientRect().left;
-        offsetY.value = event.clientY - event.target.getBoundingClientRect().top;
+        const pos = getClientPos(event);
+        offsetX.value = pos.clientX - event.target.getBoundingClientRect().left;
+        offsetY.value = pos.clientY - event.target.getBoundingClientRect().top;
         document.addEventListener("mousemove", drag);
         document.addEventListener("mouseup", endDrag);
+        document.addEventListener("touchmove", drag, { passive: false });
+        document.addEventListener("touchend", endDrag);
       };
       const drag = (event) => {
         if (!isDragging.value)
           return;
-        const x = event.clientX - offsetX.value;
-        const y = event.clientY - offsetY.value;
+        event.preventDefault();
+        const pos = getClientPos(event);
+        const x = pos.clientX - offsetX.value;
+        const y = pos.clientY - offsetY.value;
         moveStyle.value = {
           left: `${x - 11}px`,
           top: `${y - 11}px`
@@ -6218,6 +6229,8 @@
         isDragging.value = false;
         document.removeEventListener("mousemove", drag);
         document.removeEventListener("mouseup", endDrag);
+        document.removeEventListener("touchmove", drag);
+        document.removeEventListener("touchend", endDrag);
       };
       return (_ctx, _cache) => {
         const _component_el_icon = vue.resolveComponent("el-icon");
@@ -6243,7 +6256,8 @@
             header: vue.withCtx(() => [
               vue.createElementVNode("div", {
                 class: "card-header",
-                onMousedown: startDrag
+                onMousedown: startDrag,
+                onTouchstart: startDrag
               }, [
                 vue.createElementVNode("div", _hoisted_2, [
                   vue.createElementVNode("span", null, vue.toDisplayString(vue.unref(configStore).platformParams[vue.unref(configStore).platformName].name), 1),
