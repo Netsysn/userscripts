@@ -5531,6 +5531,11 @@
       }
       // 检查自动检测开关 (otherParams.params[2])
       const cfg = useConfigStore();
+      const token = cfg.queryApis[0]?.token || '';
+      if (!token || token.trim() === '') {
+        logStore.addLog(`请先在答题面板填写题库密钥`, "danger");
+        return;
+      }
       const autoDetect = cfg.otherParams.params[2]?.value ?? true;
       if (!autoDetect) {
         logStore.addLog(`检测到章节学习页面（手动模式）`, "primary");
@@ -5796,7 +5801,12 @@
   };
   const useCxWorkLogic = async () => {
     const logStore = useLogStore();
-    useConfigStore();
+    const cfg = useConfigStore();
+    const token = cfg.queryApis[0]?.token || '';
+    if (!token || token.trim() === '') {
+      logStore.addLog(`请先在答题面板填写题库密钥`, "danger");
+      return;
+    }
     logStore.addLog(`进入新版作业页面，开始准备答题`, "primary");
     logStore.addLog(`正在解析题目, 请等待5s`, "warning");
     await new CxQuestionHandler("zy").init();
@@ -5804,6 +5814,11 @@
   const useCxExamLogic = async () => {
     const logStore = useLogStore();
     const configStore = useConfigStore();
+    const token = configStore.queryApis[0]?.token || '';
+    if (!token || token.trim() === '') {
+      logStore.addLog(`请先在答题面板填写题库密钥`, "danger");
+      return;
+    }
     logStore.addLog(`进入新版考试页面，开始准备答题`, "primary");
     logStore.addLog(`正在解析题目, 请等待5s`, "warning");
     await new CxQuestionHandler("ks").init();
@@ -5997,7 +6012,12 @@
   const useZhsAnswerLogic = async () => {
     hookError();
     const logStore = useLogStore();
-    useConfigStore();
+    const cfg = useConfigStore();
+    const token = cfg.queryApis[0]?.token || '';
+    if (!token || token.trim() === '') {
+      logStore.addLog(`请先在答题面板填写题库密钥`, "danger");
+      return;
+    }
     logStore.addLog(`进入答题页面，开始准备答题`, "primary");
     logStore.addLog(`正在解析题目, 请等待5s`, "warning");
     new XMLHttpRequestInterceptor(["gateway/t/v1/answer/hasAnswer"], async () => {
