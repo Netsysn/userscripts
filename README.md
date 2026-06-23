@@ -43,14 +43,4 @@ https://cdn.jsdelivr.net/gh/Netsysn/userscripts/chaoxing.user.js
 | 🌐 CDN 分发 | 通过 jsDelivr 全球 CDN 分发脚本，绕过 Cloudflare 安全检查 |
 | 🐳 基础设施 | Cloudflare Tunnel 零端口暴露 + systemd 服务化 + Nginx 反代 |
 
-## 更新
-
-```bash
-cd ~/userscripts
-# 修改 chaoxing.user.js 后
-git add chaoxing.user.js
-git commit -m "更新脚本"
-git push
-```
-
 jsDelivr 会在几分钟内自动同步最新版本。
