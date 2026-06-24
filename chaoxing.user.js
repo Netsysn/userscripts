@@ -817,7 +817,7 @@
   const QuestionTable = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["__scopeId", "data-v-18523ca7"]]);
   const _sfc_main$5 = {};
   const _hoisted_1$2 = { style: { "font-size": "12px" } };
-  const _hoisted_2$2 = /* @__PURE__ */ vue.createElementVNode("p", null, "1、本脚本基于 DeepSeek + 联网搜索 + 提示词优化，50 题实测准确率 95%~99%。答题脚本为 GitHub 开源项目，免费附赠，不会额外收费。", -1);
+  const _hoisted_2$2 = /* @__PURE__ */ vue.createElementVNode("p", null, "1、本脚本基于 DeepSeek V4 + 联网搜索 + 提示词优化，116 题实测综合准确率 90%+。答题脚本为 GitHub 开源项目，免费附赠，不会额外收费。", -1);
   const _hoisted_3$2 = /* @__PURE__ */ vue.createElementVNode("p", null, '2、获取密钥：[1] 点击标签页"答题" --> [2] 填入从管理员处获取的 32 位密钥 --> [3] 刷新页面生效。', -1);
   const _hoisted_4$1 = /* @__PURE__ */ vue.createElementVNode("p", { style: { "font-weight": "500" } }, "购买方式：", -1);
   const _hoisted_5$1 = /* @__PURE__ */ vue.createElementVNode("p", null, "-- 访问发卡站 https://netsysn.cn 选择套餐，支持支付宝/微信扫码支付，付款后自动发放密钥。", -1);
