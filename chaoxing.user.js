@@ -821,13 +821,15 @@
   const _hoisted_3$2 = /* @__PURE__ */ vue.createElementVNode("p", null, '2、获取密钥：[1] 点击标签页"答题" --> [2] 填入从管理员处获取的 32 位密钥 --> [3] 刷新页面生效。', -1);
   const _hoisted_4$1 = /* @__PURE__ */ vue.createElementVNode("p", { style: { "font-weight": "500" } }, "购买方式：", -1);
   const _hoisted_5$1 = /* @__PURE__ */ vue.createElementVNode("p", null, "-- 访问发卡站 https://netsysn.cn 选择套餐，支持支付宝/微信扫码支付，付款后自动发放密钥。", -1);
-  const _hoisted_6$1 = /* @__PURE__ */ vue.createElementVNode("p", null, "-- 联系 QQ 1065722706 或微信 WDKGZ-938FY-AB5L2，工作日白天基本在线，题库额度用完购买新密钥即可。", -1);
+  const const _hoisted_acc = vue.createElementVNode("p", { style: { "margin-top":"12px","padding":"10px","background":"#f0f9ff","border-radius":"6px","font-size":"12px","border":"1px solid #bae6fd" } }, "题库准确率：基于116道多学科真题实测（2026.06），综合准确率90%+。简答题85~90%，多选题95%+，填空题100%。基于DeepSeek V4+联网搜索+提示词优化。", -1);
+  _hoisted_6$1 = /* @__PURE__ */ vue.createElementVNode("p", null, "-- 联系 QQ 1065722706 或微信 WDKGZ-938FY-AB5L2，工作日白天基本在线，题库额度用完购买新密钥即可。", -1);
   const _hoisted_7$1 = [
     _hoisted_2$2,
     _hoisted_3$2,
     _hoisted_4$1,
     _hoisted_5$1,
-    _hoisted_6$1
+    const _hoisted_acc = vue.createElementVNode("p", { style: { "margin-top":"12px","padding":"10px","background":"#f0f9ff","border-radius":"6px","font-size":"12px","border":"1px solid #bae6fd" } }, "题库准确率：基于116道多学科真题实测（2026.06），综合准确率90%+。简答题85~90%，多选题95%+，填空题100%。基于DeepSeek V4+联网搜索+提示词优化。", -1);
+  _hoisted_6$1
   ];
   function _sfc_render$1(_ctx, _cache) {
     return vue.openBlock(), vue.createElementBlock("div", _hoisted_1$2, _hoisted_7$1);
