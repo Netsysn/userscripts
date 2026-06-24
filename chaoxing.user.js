@@ -850,20 +850,21 @@
     }
   });
   function _sfc_render$cache(_ctx,_cache) {
-    return vue.openBlock(), vue.createElementBlock("div", { style: { "font-size":"12px" } }, [
-      vue.createElementVNode("div", { style: { "display":"flex","gap":"4px","margin-bottom":"10px" } }, [
-        vue.createElementVNode("span", { style:{"line-height":"28px","margin-right":"10px"} }, "共"+_ctx.count+"条", -1),
-        vue.createVNode(vue.resolveComponent("el-button"), { size:"small", onClick:_ctx.exportCache }, { default: vue.withCtx(() => [vue.createTextVNode("导出缓存")]) }),
-        vue.createVNode(vue.resolveComponent("el-button"), { size:"small", type:"success", onClick:_ctx.exportCfg }, { default: vue.withCtx(() => [vue.createTextVNode("导出配置")]) }),
-        vue.createVNode(vue.resolveComponent("el-button"), { size:"small", type:"warning", onClick:_ctx.importCfg }, { default: vue.withCtx(() => [vue.createTextVNode("导入配置")]) }),
-        vue.createVNode(vue.resolveComponent("el-button"), { size:"small", type:"danger", onClick:_ctx.clearAll }, { default: vue.withCtx(() => [vue.createTextVNode("清空")]) })
+    const btnStyle = { "font-size":"11px","padding":"4px 8px" };
+    return vue.openBlock(), vue.createElementBlock("div", { style: { "font-size":"12px","overflow":"hidden" } }, [
+      vue.createElementVNode("div", { style: { "display":"flex","flex-wrap":"wrap","gap":"4px","margin-bottom":"8px" } }, [
+        vue.createElementVNode("span", { style:{"line-height":"26px","margin-right":"6px"} }, "共"+_ctx.count+"条", -1),
+        vue.createVNode(vue.resolveComponent("el-button"), { size:"small", onClick:_ctx.exportCache, style:btnStyle }, { default: vue.withCtx(() => [vue.createTextVNode("导出缓存")]) }),
+        vue.createVNode(vue.resolveComponent("el-button"), { size:"small", type:"success", onClick:_ctx.exportCfg, style:btnStyle }, { default: vue.withCtx(() => [vue.createTextVNode("导出配置")]) }),
+        vue.createVNode(vue.resolveComponent("el-button"), { size:"small", type:"warning", onClick:_ctx.importCfg, style:btnStyle }, { default: vue.withCtx(() => [vue.createTextVNode("导入配置")]) }),
+        vue.createVNode(vue.resolveComponent("el-button"), { size:"small", type:"danger", onClick:_ctx.clearAll, style:btnStyle }, { default: vue.withCtx(() => [vue.createTextVNode("清空")]) })
       ]),
-      vue.withDirectives(vue.createElementVNode("input", { type:"text", placeholder:"搜索题目...", style:{"width":"100%","padding":"6px 10px","border":"1px solid #ddd","border-radius":"4px","margin-bottom":"8px","font-size":"12px"}, onInput: _cache[0] || (_cache[0] = ($event) => _ctx.searchText = $event.target.value) }, null, 512), [[vue.vModelText, _ctx.searchText]]),
-      vue.createElementVNode("div", { style:{"max-height":"50vh","overflow":"auto"} }, [
+      vue.withDirectives(vue.createElementVNode("input", { type:"text", placeholder:"搜索题目...", style:{"width":"100%","padding":"5px 8px","border":"1px solid #ddd","border-radius":"4px","margin-bottom":"8px","font-size":"12px","box-sizing":"border-box"}, onInput: _cache[0] || (_cache[0] = ($event) => _ctx.searchText = $event.target.value) }, null, 512), [[vue.vModelText, _ctx.searchText]]),
+      vue.createElementVNode("div", { style:{"max-height":"45vh","overflow":"auto","width":"100%"} }, [
         (vue.openBlock(), vue.createElementBlock(vue.Fragment, null, vue.renderList(_ctx.filtered, (entry) => {
-          return vue.createElementVNode("div", { key: entry.key, style:{"padding":"4px 0","border-bottom":"1px solid #eee","font-size":"11px","word-break":"break-all"} }, [
-            vue.createTextVNode((Array.isArray(entry.value) ? entry.value.join(', ') : String(entry.value)) + " "),
-            vue.createVNode(vue.resolveComponent("el-button"), { size:"small", type:"danger", style:{"float":"right"}, onClick: ($event) => _ctx.remove(entry.key) }, { default: vue.withCtx(() => [vue.createTextVNode("删")]) })
+          return vue.createElementVNode("div", { key: entry.key, style:{"padding":"3px 0","border-bottom":"1px solid #eee","font-size":"11px","word-break":"break-all","display":"flex","justify-content":"space-between","align-items":"flex-start"} }, [
+            vue.createElementVNode("span", { style:{"flex":"1","overflow-wrap":"break-word","word-break":"break-all"} }, (Array.isArray(entry.value) ? entry.value.join(', ') : String(entry.value)), -1),
+            vue.createVNode(vue.resolveComponent("el-button"), { size:"small", type:"danger", style:{"flex-shrink":"0","margin-left":"6px","font-size":"11px","padding":"2px 6px"}, onClick: ($event) => _ctx.remove(entry.key) }, { default: vue.withCtx(() => [vue.createTextVNode("删")]) })
           ]);
         }), 128))
       ])
