@@ -5558,9 +5558,115 @@
       location.reload();
     };
   };
+  const injectCachePanel = () => {
+    if (document.getElementById('cx-cache-panel')) return;
+    const logStore = useLogStore();
+    const cacheKeys = [];
+    try {
+      const allKeys = GM_listValues ? GM_listValues() : [];
+      for (const k of allKeys) { if (k.startsWith('cx_ans_')) cacheKeys.push(k); }
+    } catch(e) {}
+
+    const html = `
+    <div id="cx-cache-overlay" style="display:none;position:fixed;inset:0;z-index:100010;background:rgba(0,0,0,.5);align-items:center;justify-content:center">
+      <div style="background:#fff;border-radius:12px;padding:24px;max-width:600px;width:90%;max-height:80vh;overflow:auto;box-shadow:0 8px 32px rgba(0,0,0,.3)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <h3 style="margin:0">答案缓存 (${cacheKeys.length}条)</h3>
+          <div>
+            <button id="cx-cache-export" style="padding:6px 12px;background:#1f71e0;color:#fff;border:none;border-radius:6px;cursor:pointer;margin-right:8px;font-size:12px">导出JSON</button>
+            <button id="cx-cache-clear" style="padding:6px 12px;background:#e74c3c;color:#fff;border:none;border-radius:6px;cursor:pointer;margin-right:8px;font-size:12px">清空全部</button>
+            <button id="cx-cache-close" style="padding:6px 12px;background:#999;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:12px">关闭</button>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:12px">
+          <button id="cx-config-export" style="flex:1;padding:6px;background:#27ae60;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:12px">导出配置</button>
+          <button id="cx-config-import" style="flex:1;padding:6px;background:#f39c12;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:12px">导入配置</button>
+          <input type="file" id="cx-config-file" accept=".json" style="display:none">
+        </div>
+        <input id="cx-cache-search" placeholder="搜索题目..." style="width:100%;padding:8px 12px;border:1px solid #ddd;border-radius:6px;margin-bottom:12px;font-size:13px">
+        <div id="cx-cache-list" style="max-height:40vh;overflow:auto"></div>
+      </div>
+    </div>`;
+    document.body.insertAdjacentHTML('beforeend', html);
+
+    const overlay = document.getElementById('cx-cache-overlay');
+    const list = document.getElementById('cx-cache-list');
+    const search = document.getElementById('cx-cache-search');
+    const render = (filter) => {
+      list.innerHTML = cacheKeys.filter(k => !filter || k.toLowerCase().includes(filter.toLowerCase())).map(k => {
+        const v = GM_getValue(k, null);
+        if (!v) return '';
+        return `<div style="padding:6px 0;border-bottom:1px solid #eee;font-size:12px;word-break:break-all">${v.join ? v.join(', ') : v}<button data-key="${k}" class="cx-cache-del" style="float:right;background:#e74c3c;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:11px;padding:2px 6px">删</button></div>`;
+      }).join('') || '<p style="color:#999">无匹配缓存</p>';
+      list.querySelectorAll('.cx-cache-del').forEach(btn => {
+        btn.onclick = function() {
+          GM_setValue(this.dataset.key, null);
+          const idx = cacheKeys.indexOf(this.dataset.key);
+          if (idx >= 0) cacheKeys.splice(idx,1);
+          render(search.value);
+        };
+      });
+    };
+    render('');
+    search.oninput = () => render(search.value.trim());
+    document.getElementById('cx-cache-export').onclick = () => {
+      const data = {};
+      cacheKeys.forEach(k => { data[k] = GM_getValue(k,null); });
+      const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+      a.download = `chaoxing-cache-${new Date().toISOString().slice(0,10)}.json`; a.click();
+      logStore.addLog('缓存已导出', 'success');
+    };
+    document.getElementById('cx-cache-clear').onclick = () => {
+      if (!confirm('确定清空全部缓存？')) return;
+      cacheKeys.forEach(k => GM_setValue(k, null));
+      cacheKeys.length = 0; render('');
+      logStore.addLog('缓存已清空', 'warning');
+    };
+    document.getElementById('cx-cache-close').onclick = () => { overlay.style.display = 'none'; };
+    overlay.onclick = (e) => { if (e.target === overlay) overlay.style.display = 'none'; };
+
+    // 导出/导入配置
+    document.getElementById('cx-config-export').onclick = () => {
+      const cfg = GM_getValue('config', null);
+      if (!cfg) { logStore.addLog('无配置可导出', 'warning'); return; }
+      const blob = new Blob([JSON.stringify(cfg,null,2)], {type:'application/json'});
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+      a.download = `chaoxing-config-${new Date().toISOString().slice(0,10)}.json`; a.click();
+      logStore.addLog('配置已导出', 'success');
+    };
+    document.getElementById('cx-config-import').onclick = () => {
+      document.getElementById('cx-config-file').click();
+    };
+    document.getElementById('cx-config-file').onchange = (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        try {
+          const data = JSON.parse(ev.target.result);
+          GM_setValue('config', JSON.stringify(data));
+          logStore.addLog('配置已导入，刷新页面生效', 'success');
+          setTimeout(() => location.reload(), 1500);
+        } catch(ex) {
+          logStore.addLog('导入失败：JSON格式错误', 'danger');
+        }
+      };
+      reader.readAsText(file);
+    };
+
+    // 开门按钮
+    const btn = document.createElement('button');
+    btn.id = 'cx-cache-btn';
+    btn.textContent = '缓存';
+    btn.style.cssText = 'position:fixed;bottom:130px;right:20px;z-index:100005;padding:8px 14px;background:#333;color:#fff;border:none;border-radius:8px;font-size:12px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.2);';
+    btn.onclick = () => { overlay.style.display = 'flex'; render(search.value); };
+    document.body.appendChild(btn);
+  };
   const useCxChapterLogic = () => {
     const logStore = useLogStore();
     const init = () => {
+      injectCachePanel();
       // 防止页面失焦暂停
       document.addEventListener('visibilitychange', (e) => { e.stopImmediatePropagation(); e.stopPropagation(); }, true);
       Object.defineProperty(document, 'hidden', { get: () => false });
