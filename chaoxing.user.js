@@ -35,7 +35,7 @@
 // @grant        unsafeWindow
 // @run-at       document-start
 // @downloadURL https://cdn.jsdelivr.net/gh/Netsysn/userscripts@ed0c342/chaoxing.user.js
-// @updateURL https://cdn.jsdelivr.net/gh/Netsysn/userscripts@ed0c342/chaoxing.user.js
+// // @updateURL https://raw.githubusercontent.com/Netsysn/userscripts/main/chaoxing.user.js
 // ==/UserScript==
 
 (a=>{const e=document.createElement("style");e.dataset.source="vite-plugin-monkey",e.textContent=a,document.head.append(e)})(" .log[data-v-d41d5897]{el-text[data-v-d41d5897] {white-space: normal;}}.setting[data-v-4489784f]{margin-top:-8px;font-size:14px}.setting[data-v-4489784f] .el-form-item[data-v-4489784f]{margin-bottom:0}.question_table[data-v-18523ca7]{width:625px}.main-page{z-index:100003;position:fixed}.main-page .overlay{position:fixed;top:0;left:0;right:0;bottom:0;z-index:1001}.main-page .el-card .card-header{display:flex;justify-content:space-between;flex-direction:row;align-items:center;margin:0;padding:0;cursor:move}.main-page .el-card .card-header .title{font-size:14px;display:flex;align-items:center;justify-content:center;font-weight:500}.main-page .el-card .minus{margin:5px 10px -10px 0}.main-page .demo-tabs{display:initial}.main-page .el-card__header{background-color:#1f71e0;color:#fff;padding:7px 10px 7px 16px;margin:0}.main-page .el-card__body{padding:0 16px 20px}.main-page .el-tabs__nav-wrap:after{height:1px}.main-page .el-tabs__active-bar{background-color:#176ae5}.main-page .el-tabs__item{font-size:13px;height:34px}.main-page .el-tabs__item.is-top{font-weight:400;color:#4e5969;padding:0 8px 0 12px}.main-page .el-tabs__item.is-active{font-weight:500;color:#176ae5;padding:0 8px 0 12px}.el-tooltip__popper{z-index:100004!important} ");
