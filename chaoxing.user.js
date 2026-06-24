@@ -34,7 +34,7 @@
 // @grant        GM_xmlhttpRequest
 // @grant        unsafeWindow
 // @run-at       document-start
-// @downloadURL https://cdn.jsdelivr.net/gh/Netsysn/userscripts@05fd395/chaoxing.user.js
+// @downloadURL https://cdn.jsdelivr.net/gh/Netsysn/userscripts@main/chaoxing.user.js
 // @updateURL https://raw.githubusercontent.com/Netsysn/userscripts/main/chaoxing.user.js
 // ==/UserScript==
 
