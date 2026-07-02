@@ -876,6 +876,62 @@
   }
   const CacheViewer = /* @__PURE__ */ _export_sfc(_sfc_main$45, [["render", _sfc_render$cache]]);
 
+  const _sfc_main$stats = vue.defineComponent({
+    __name: "QuestionStats",
+    setup() {
+      const stats = vue.ref(null); const loading = vue.ref(false); const error = vue.ref('');
+      const configStore = useConfigStore(); const logStore = useLogStore();
+      const load = async () => {
+        loading.value = true; error.value = '';
+        try {
+          const baseUrl = (configStore.queryApis[0].url || "https://netsysn.site").replace(/\/+$/, "");
+          const token = configStore.queryApis[0].token || '';
+          const resp = await fetch(`${baseUrl}/admin/questions/stats?token=${encodeURIComponent(token)}`);
+          const data = await resp.json();
+          if (data.error) { error.value = data.error; stats.value = null; }
+          else stats.value = data;
+        } catch (e) { error.value = '无法连接服务器'; stats.value = null; }
+        loading.value = false;
+      };
+      vue.onMounted(load);
+      return { stats, loading, error, load, logStore };
+    }
+  });
+  function _sfc_render$stats(_ctx,_cache) {
+    const styleCard = { "padding":"10px 14px","background":"#f8f9fa","border-radius":"6px","margin-bottom":"8px" };
+    const styleStat = { "display":"flex","justify-content":"space-between","align-items":"center" };
+    const styleVal = { "font-size":"20px","font-weight":"700","color":"#1f71e0" };
+    const styleLabel = { "font-size":"11px","color":"#888" };
+    return vue.openBlock(), vue.createElementBlock("div", { style: { "font-size":"12px" } }, [
+      vue.createVNode(vue.resolveComponent("el-button"), { size:"small", onClick:_ctx.load, style:{"margin-bottom":"10px"}, loading:_ctx.loading }, { default: vue.withCtx(() => [vue.createTextVNode("刷新统计")]) }),
+      _ctx.error ? (vue.openBlock(), vue.createElementBlock("p", { key:0, style:{"color":"#e74c3c"} }, vue.toDisplayString(_ctx.error), 1)) : _ctx.stats ? (vue.openBlock(), vue.createElementBlock(vue.Fragment, { key:1 }, [
+        vue.createElementVNode("div", { style: vue.normalizeStyle(styleCard) }, [
+          vue.createElementVNode("div", { style: vue.normalizeStyle(styleStat) }, [
+            vue.createElementVNode("span", { style: vue.normalizeStyle(styleLabel) }, "缓存条目"),
+            vue.createElementVNode("span", { style: vue.normalizeStyle(styleVal) }, vue.toDisplayString(_ctx.stats.totalEntries), 1)
+          ]),
+          vue.createElementVNode("div", { style: vue.normalizeStyle({...styleStat,"margin-top":"6px"}) }, [
+            vue.createElementVNode("span", { style: vue.normalizeStyle(styleLabel) }, "累计命中"),
+            vue.createElementVNode("span", { style: vue.normalizeStyle(styleVal) }, vue.toDisplayString(_ctx.stats.totalHits), 1)
+          ]),
+          vue.createElementVNode("div", { style: vue.normalizeStyle({"margin-top":"6px","font-size":"12px","color":"#2ecc71"}) }, vue.toDisplayString(_ctx.stats.estimatedSavings), 1)
+        ]),
+        _ctx.stats.topQuestions && _ctx.stats.topQuestions.length > 0 ? (vue.openBlock(), vue.createElementBlock("div", { key:0 }, [
+          vue.createElementVNode("p", { style:{"font-weight":"600","margin":"8px 0 4px"} }, "热门题目 Top 10"),
+          vue.createElementVNode("div", { style:{"max-height":"40vh","overflow":"auto"} }, [
+            (vue.openBlock(), vue.createElementBlock(vue.Fragment, null, vue.renderList(_ctx.stats.topQuestions, (q, i) => {
+              return vue.createElementVNode("div", { key:i, style:{"padding":"4px 0","border-bottom":"1px solid #eee","font-size":"11px"} }, [
+                vue.createElementVNode("span", { style:{"color":"#1f71e0","font-weight":"600","margin-right":"4px"} }, vue.toDisplayString(q.hitCount) + "x", 1),
+                vue.createTextVNode(" " + vue.toDisplayString(q.question) + " " + vue.toDisplayString(Array.isArray(q.answer) ? q.answer.join(', ') : ''), 1)
+              ]);
+            }), 128))
+          ])
+        ])) : vue.createCommentVNode("", true)
+      ], 64)) : vue.createCommentVNode("", true)
+    ]);
+  }
+  const QuestionStats = /* @__PURE__ */ _export_sfc(_sfc_main$stats, [["render", _sfc_render$stats]]);
+
   const _sfc_main$4 = {};
   const _hoisted_1$1 = { style: { "font-size": "12px" } };
   const _hoisted_2$1 = /* @__PURE__ */ vue.createElementVNode("p", null, "1、本脚本仅供学习和研究目的使用，并应在24小时内删除。脚本的使用不应违反任何法律法规及学术道德标准。", -1);
@@ -6220,6 +6276,11 @@
           label: "缓存",
           icon: view_default,
           component: CacheViewer
+        },
+        {
+          label: "统计",
+          icon: view_default,
+          component: QuestionStats
         },
         {
           label: "教程",
