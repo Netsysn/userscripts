@@ -5221,8 +5221,8 @@
       this.addQuestion = questionStore.addQuestion;
     }
   }
-  const handleError = (msg) => ({
-    code: 10003,
+  const handleError = (msg, code = 10003) => ({
+    code,
     data: {
       answer: [],
       num: "",
@@ -5275,6 +5275,7 @@
               // 可能是 Cloudflare 挑战页面，重试
               if (retries < maxRetries && (response.responseText.includes('_cf_chl_opt') || response.responseText.includes('Just a moment'))) {
                 retries++;
+                logStore.addLog("触发 Cloudflare 验证，已自动重试...", 'warning');
                 setTimeout(doRequest, 2000);
               } else {
                 resolve(handleError("解析出错"));
@@ -5286,10 +5287,10 @@
               retries++;
               setTimeout(doRequest, 2000);
             } else {
-              resolve(handleError("请求出错"));
+              resolve(handleError("无法连接 API 服务器，请检查网络或访问 netsysn.site 确认服务状态"));
             }
           },
-          ontimeout: () => resolve(handleError("请求超时"))
+          ontimeout: () => resolve(handleError("API 响应超时，复杂题目建议手动作答"))
         });
       };
       doRequest();
@@ -5317,8 +5318,16 @@
     for (const url2 of apis) {
       const result = await getAnswerFrom(question, url2);
       if (result.code === 10004) {
-        logStore.addLog(`⚠️ ${result.msg}`, 'danger');
+        logStore.addLog(`${result.msg}`, 'danger');
         return result;
+      }
+      if (result.code === 10005) {
+        logStore.addLog(`${result.msg}，正在重试...`, 'warning');
+        continue; // 超时尝试下一个 API
+      }
+      if (result.code === 10006) {
+        logStore.addLog(`${result.msg}`, 'danger');
+        return result; // AI 不可用直接返回
       }
       if (result.code !== 10003) {
         return result;
@@ -5360,7 +5369,7 @@
             } else if (answerData.code === 200 && conf === 'medium') {
               // 存疑：弹窗询问用户
               const ans = (answerData.data.answer || []).join(', ');
-              const ok = confirm(`⚠ AI不确定 · 第${index + 1}道\n\n题目: ${question.title}\nAI建议: ${ans}\n\n是否采纳此答案？`);
+              const ok = confirm(`[存疑] AI不确定 · 第${index + 1}道\n\n题目: ${question.title}\nAI建议: ${ans}\n\n是否采纳此答案？`);
               if (ok) {
                 question.answer = answerData.data.answer;
                 this.fillQuestion(question);
@@ -5373,7 +5382,7 @@
               }
             } else if (answerData.code === 200 && conf === 'low') {
               question.answer = [];
-              this.addLog(`⊘ 第${index + 1}道题AI放弃，留待审查`, "warning");
+              this.addLog(`[跳过] 第${index + 1}道题AI放弃，留待审查`, "warning");
               reviewList.push({ index: index + 1, title: question.title });
             } else if (answerData.code === 10004) {
               this.addLog(answerData.msg, "danger");
@@ -5389,7 +5398,7 @@
           // 最终审查汇总
           if (reviewList.length > 0) {
             this.addLog(`━━━━━━━━━━━━━━━━━━`, "primary");
-            this.addLog(`⚠ 需手动审查: ${reviewList.length} 道题`, "warning");
+            this.addLog(`[注意] 需手动审查: ${reviewList.length} 道题`, "warning");
             reviewList.forEach(r => this.addLog(`  · 第${r.index}道: ${r.title}`, "info"));
             this.addLog(`━━━━━━━━━━━━━━━━━━`, "primary");
           }
@@ -5467,24 +5476,44 @@
                 }
               }
               if (!matched) {
-                this.addLog(`⚠ 选项匹配失败: "${answer}"`, 'warning');
+                this.addLog(`[警告] 选项匹配失败: "${answer}"`, 'warning');
               }
             }
           })();
         } else if (question.type === "2") {
           const textareaElements = question.element.querySelectorAll("textarea");
           if (textareaElements.length === 0) return;
+          const answers = question.answer || [];
+          // 检测答案数与填空数是否匹配
+          if (answers.length !== textareaElements.length && answers.length > 0) {
+            this.addLog(`[警告] 答案数(${answers.length})与填空数(${textareaElements.length})不一致，请手动检查`, 'warning');
+          }
           textareaElements.forEach((textareaElement, index) => {
+            // 没有对应位置的答案就跳过，不再把 answer[0] 填到所有空
+            let val = answers[index];
+            // 答案多于空数：多余的答案追加到最后一个空
+            if (index === textareaElements.length - 1 && answers.length > textareaElements.length) {
+              const extra = answers.slice(textareaElements.length - 1);
+              val = extra.join('; ');
+            }
+            if (val === undefined || val === null || val === '') {
+              // 空数多于答案数：高亮未填充的空
+              if (answers.length > 0 && index >= answers.length) {
+                textareaElement.style.border = '2px solid #e74c3c';
+                textareaElement.style.backgroundColor = '#fff5f5';
+              }
+              return;
+            }
             try {
               const ueditor = this._window.UE.getEditor(textareaElement.name);
-              if (ueditor && question.answer[index]) {
-                ueditor.setContent(question.answer[index]);
+              if (ueditor) {
+                ueditor.setContent(val);
               } else {
-                textareaElement.value = question.answer[index] || question.answer[0] || '';
+                textareaElement.value = val;
                 textareaElement.dispatchEvent(new Event('input', { bubbles: true }));
               }
             } catch (e) {
-              textareaElement.value = question.answer[index] || question.answer[0] || '';
+              textareaElement.value = val;
               textareaElement.dispatchEvent(new Event('input', { bubbles: true }));
             }
           });
@@ -5938,7 +5967,7 @@
               setCachedAnswer(question, answerData.data.answer);
             } else if (answerData.code === 200 && conf2 === 'medium') {
               const ans = (answerData.data.answer || []).join(', ');
-              const ok = confirm(`⚠ AI不确定 · 第${index + 1}道\n\n题目: ${question.title}\nAI建议: ${ans}\n\n是否采纳此答案？`);
+              const ok = confirm(`[存疑] AI不确定 · 第${index + 1}道\n\n题目: ${question.title}\nAI建议: ${ans}\n\n是否采纳此答案？`);
               if (ok) {
                 question.answer = answerData.data.answer;
                 this.fillQuestion(question);
@@ -5950,7 +5979,7 @@
               }
             } else if (answerData.code === 200 && conf2 === 'low') {
               question.answer = [];
-              this.addLog(`⊘ 第${index + 1}道题AI放弃，留待审查`, "warning");
+              this.addLog(`[跳过] 第${index + 1}道题AI放弃，留待审查`, "warning");
               reviewList2.push({ index: index + 1, title: question.title });
             } else if (answerData.code === 10004) {
               this.addLog(answerData.msg, "danger");
@@ -5966,7 +5995,7 @@
           }
           if (reviewList2.length > 0) {
             this.addLog(`━━━━━━━━━━━━━━━━━━`, "primary");
-            this.addLog(`⚠ 需手动审查: ${reviewList2.length} 道题`, "warning");
+            this.addLog(`[注意] 需手动审查: ${reviewList2.length} 道题`, "warning");
             reviewList2.forEach(r => this.addLog(`  · 第${r.index}道: ${r.title}`, "info"));
             this.addLog(`━━━━━━━━━━━━━━━━━━`, "primary");
           }
